@@ -8,7 +8,7 @@
 #' @param dfrom A character specifying the data from which you want to query data (YYYY-MM-DD)
 #' @param dto A character specifying the data to which you want to query data (YYYY-MM-DD)
 #' @param month_day A character specifying the month and day from which you want TMY data (MM-DD)
-#' @param api_v.chr A character specifying the version of the API you want to use ("v1" or "v2")
+#' @param api_v A character specifying the version of the API you want to use ("v1" or "v2")
 #' @param test.bool A boolean, TRUE if you want to query the test server
 #' @return A list containing the metadata in the first element and the queried data in the second element
 #' @export
@@ -37,19 +37,19 @@ get_from_agromet_API <- function(
 
   # Build the proper table API call URL
   if (table_name=="get_rawdata_irm"){
-    api_table_url.chr <- paste(baseURL.chr, api_v.chr, table_name, sensors, sid, dfrom, dto, sep="/")
+    api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sensors, sid, dfrom, dto, sep="/")
   }
   if (table_name=="station"){
-    api_table_url.chr <- paste(baseURL.chr, api_v.chr, table_name, sid,  sep="/")
+    api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sid,  sep="/")
   }
   if (table_name=="cleandata"){
-    api_table_url.chr <- paste(baseURL.chr, api_v.chr, table_name, sensors, sid, dfrom, dto, sep="/")
+    api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sensors, sid, dfrom, dto, sep="/")
   }
   if (table_name=="get_tmy"){
-    api_table_url.chr <- paste(baseURL.chr, api_v.chr, table_name, sensors, sid, month_day, sep="/")
+    api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sensors, sid, month_day, sep="/")
   }
   if (table_name=="get_rawdata_dssf"){
-    api_table_url.chr <- paste(baseURL.chr, api_v.chr, table_name, dfrom, dto, "dailygeojson", sep="/")
+    api_table_url.chr <- paste(baseURL.chr, api_v, table_name, dfrom, dto, "dailygeojson", sep="/")
   }
   cat(paste("your API URL call is : ", api_table_url.chr, " \n "))
 
