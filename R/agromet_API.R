@@ -118,11 +118,12 @@ get_from_agromet_API <- function(
 
 #----
 #' Prepare the data obtained by get_from_agromet_api.fun(). It types all the character variables to their proper types.
+#' @importFrom magrittr %>%
 #' @param  meta_and_records.l a list containing agromet records and metadata returned by get_from_agromet_api.fun().
 #' @param table_name a character specifying the name of the agromet table from which the data where called using get_from_agromet_api.fun()
 #' @return a typed dataframe
 #' @export
-prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name=NULL){
+prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleandata"){
 
   # declaration of the function to convert sunrise and sunset columns to chron objects
   convertSun <- function(sunHour.chr){
