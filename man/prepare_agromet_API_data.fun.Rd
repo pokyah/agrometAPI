@@ -4,7 +4,7 @@
 \alias{prepare_agromet_API_data.fun}
 \title{Prepare the data obtained by get_from_agromet_api.fun(). It types all the character variables to their proper types.}
 \usage{
-prepare_agromet_API_data.fun(meta_and_records.l, table_name = NULL)
+prepare_agromet_API_data.fun(meta_and_records.l, table_name = "cleandata")
 }
 \arguments{
 \item{meta_and_records.l}{a list containing agromet records and metadata returned by get_from_agromet_api.fun().}
