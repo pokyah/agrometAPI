@@ -13,3 +13,4 @@ Imports: dplyr,
     httr,
     purrr,
     chron
+RoxygenNote: 6.0.1
