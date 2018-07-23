@@ -12,5 +12,6 @@ Imports: dplyr,
     jsonlite,
     httr,
     purrr,
-    chron
+    chron,
+    magrittr
 RoxygenNote: 6.0.1
