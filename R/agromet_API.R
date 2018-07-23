@@ -139,7 +139,7 @@ prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleand
   }
 
   # Create the vector of all the existing sensors in the Agromet db
-  sensors <- c("tsa", "tha", "hra", "tsf", "tss", "ens", "dvt", "vvt", "plu", "hct", "ts2", "th2", "hr2")
+  sensors <- c("tsa", "tha", "hra", "tsf", "tss", "ens", "dvt", "vvt", "plu", "hct", "ts2", "th2", "hr2", "plu_sum")
 
   # Create the stations positions df
   stations_meta.df <- meta_and_records.l[[1]]
