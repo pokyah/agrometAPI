@@ -146,6 +146,9 @@ prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleand
 
   # Create the records df
   records.df <- meta_and_records.l[[2]]
+  if (table_name == "get_tmy") {
+    records.df <- records.df %>% dplyr::select(-metadata)
+  }
 
   # In stations_meta.df, tmy_period information are stored as df stored inside df. We need to extract these from this inner level and add as new columns
   tmy_period.df <- stations_meta.df$metadata$tmy_period
