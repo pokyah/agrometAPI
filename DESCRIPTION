@@ -12,5 +12,4 @@ Imports: dplyr,
     jsonlite,
     httr,
     purrr,
-    chron,
-    dplyr
+    chron
