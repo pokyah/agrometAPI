@@ -36,19 +36,22 @@ get_from_agromet_API <- function(
   }
 
   # Build the proper table API call URL
-  if (table_name=="get_rawdata_irm"){
+  if (table_name == "get_rawdata_irm"){
     api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sensors, sid, dfrom, dto, sep="/")
   }
-  if (table_name=="station"){
+  if (table_name == "station"){
     api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sid,  sep="/")
   }
-  if (table_name=="cleandata"){
+  if (table_name == "cleandata"){
     api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sensors, sid, dfrom, dto, sep="/")
   }
-  if (table_name=="get_tmy"){
+  if (table_name == "get_tmy"){
     api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sensors, sid, month_day, sep="/")
   }
-  if (table_name=="get_rawdata_dssf"){
+  if (table_name == "get_daily"){
+    api_table_url.chr <- paste(baseURL.chr, api_v, table_name, sensors, sid, dfrom, dto, sep="/")
+  }
+  if (table_name == "get_rawdata_dssf"){
     api_table_url.chr <- paste(baseURL.chr, api_v, table_name, dfrom, dto, "dailygeojson", sep="/")
   }
   cat(paste("your API URL call is : ", api_table_url.chr, " \n "))
