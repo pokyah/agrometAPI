@@ -159,7 +159,7 @@ prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleand
 
   if(table_name != "get_rawdata_dssf"){
     stations_meta.df <- stations_meta.df %>% dplyr::select(-metadata)
-    stations_meta.df <- bind_cols(stations_meta.df, tmy_period.df)
+    stations_meta.df <- dplyr::bind_cols(stations_meta.df, tmy_period.df)
     # Transform from & to column to posix format for easier time handling
     data.df <- stations_meta.df %>%
       dplyr::mutate_at("from", as.POSIXct, format = "%Y-%m-%dT%H:%M:%S", tz = "GMT-2") %>%
