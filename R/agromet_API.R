@@ -1,5 +1,6 @@
 #----
 #' Retrieve data from the [AGROMET API](https://app.pameseb.be/fr/pages/api_call_test/).
+#' @importFrom magrittr %>%
 #' @param user_token A character specifying your user token. Default reads your .Renviron file
 #' @param table_name A character specifying the database table you want to query.
 #' @param user_token A character specifying your user token
