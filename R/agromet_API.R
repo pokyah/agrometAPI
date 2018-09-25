@@ -6,6 +6,7 @@
 #' @importFrom dplyr mutate_at
 #' @importFrom dplyr left_join
 #' @importFrom dplyr funs
+#' @importFrom dplyr vars
 #' @param user_token A character specifying your user token. Default reads your .Renviron file
 #' @param table_name A character specifying the database table you want to query.
 #' @param user_token A character specifying your user token
@@ -180,17 +181,17 @@ prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleand
     }
 
     # Transform sid and id columns from character to numeric
-    records.df <- records.df %>% dplyr::mutate_at(vars(one_of(c("sid", "id"))), dplyr::funs(as.numeric))
+    records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(one_of(c("sid", "id"))), dplyr::funs(as.numeric))
 
     # Transform mtime column to posix format for easier time handling
-    records.df <- records.df %>% dplyr::mutate_at(vars(one_of(c("mtime", "mhour"))), as.POSIXct, format = "%Y-%m-%dT%H:%M:%SZ")
+    records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(one_of(c("mtime", "mhour"))), as.POSIXct, format = "%Y-%m-%dT%H:%M:%SZ")
 
     # Transform meta altitude, longitude, latitude columns from character to numeric
-    records.df <- records.df %>% dplyr::mutate_at(vars(one_of(c("altitude", "longitude", "latitude", "lon", "lat"))), dplyr::funs(as.numeric))
+    records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(one_of(c("altitude", "longitude", "latitude", "lon", "lat"))), dplyr::funs(as.numeric))
 
     if(table_name != "get_rawdata_dssf"){
       # Transform sensors columns from character to numeric values
-      records.df <- records.df %>% dplyr::mutate_at(vars(one_of(sensors)), dplyr::funs(as.numeric))
+      records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(one_of(sensors)), dplyr::funs(as.numeric))
 
       # Transform sunrise/sunset columns to times format for easier time handling
       if(!is.null(records.df$sunrise)){
