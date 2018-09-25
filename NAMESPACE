@@ -2,4 +2,9 @@
 
 export(get_from_agromet_API)
 export(prepare_agromet_API_data.fun)
+importFrom(dplyr,bind_cols)
+importFrom(dplyr,funs)
+importFrom(dplyr,left_join)
+importFrom(dplyr,mutate_at)
+importFrom(dplyr,select)
 importFrom(magrittr,"%>%")

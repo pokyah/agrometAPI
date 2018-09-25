@@ -8,10 +8,8 @@ Description: Retrieve data from various AGROMET tables : clean_data, get_tmy, et
 License: GNU-GPL V3
 Encoding: UTF-8
 LazyData: true
-Imports: dplyr,
-    jsonlite,
+Imports: jsonlite,
     httr,
     purrr,
-    chron,
-    magrittr
+    chron
 RoxygenNote: 6.0.1
