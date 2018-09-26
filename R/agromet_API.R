@@ -1,5 +1,11 @@
 #----
 #' Retrieve data from the [AGROMET API](https://app.pameseb.be/fr/pages/api_call_test/).
+#' @importFrom httr GET
+#' @importFrom httr add_headers
+#' @importFrom httr content
+#' @importFrom purrr imap
+#' @importFrom purrr map2_df
+#' @importFrom jsonlite fromJSON
 #' @importFrom magrittr %>%
 #' @importFrom dplyr bind_cols
 #' @importFrom dplyr select
@@ -130,6 +136,13 @@ get_from_agromet_API <- function(
 #----
 #' Prepare the data obtained by get_from_agromet_api.fun(). It types all the character variables to their proper types.
 #' @importFrom magrittr %>%
+#' @importFrom chron times
+#' @importFrom dplyr select
+#' @importFrom dplyr bind_cols
+#' @importFrom dplyr mutate_at
+#' @importFrom dplyr vars
+#' @importFrom dplyr one_of
+#' @importFrom dplyr funs
 #' @param  meta_and_records.l a list containing agromet records and metadata returned by get_from_agromet_api.fun().
 #' @param table_name a character specifying the name of the agromet table from which the data where called using get_from_agromet_api.fun()
 #' @return a typed dataframe
@@ -164,7 +177,7 @@ prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleand
   # In stations_meta.df, tmy_period information are stored as df stored inside df. We need to extract these from this inner level and add as new columns
   tmy_period.df <- stations_meta.df$metadata$tmy_period
 
-  if(table_name != "get_rawdata_dssf"){
+  if (table_name != "get_rawdata_dssf"){
     stations_meta.df <- stations_meta.df %>% dplyr::select(-metadata)
     stations_meta.df <- dplyr::bind_cols(stations_meta.df, tmy_period.df)
     # Transform from & to column to posix format for easier time handling
@@ -175,9 +188,9 @@ prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleand
     data.df <- NULL
   }
 
-  if(!is.null(records.df)){
+  if (!is.null(records.df)){
     # Join stations_meta and records by "id"
-    if(!is.null(data.df)){
+    if (!is.null(data.df)){
       records.df <- dplyr::left_join(data.df, records.df, by=c("sid"))
     }
 
