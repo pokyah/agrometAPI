@@ -26,7 +26,7 @@
 #' @param test.bool A boolean, TRUE if you want to query the test server
 #' @return A list containing the metadata in the first element and the queried data in the second element
 #' @export
-get_from_agromet_API <- function(
+get_data <- function(
   user_token = Sys.getenv("AGROMET_API_V1_KEY"),
   table_name = "cleandata",
   sensors = "tsa",
@@ -147,7 +147,7 @@ get_from_agromet_API <- function(
 #' @param table_name a character specifying the name of the agromet table from which the data where called using get_from_agromet_api.fun()
 #' @return a typed dataframe
 #' @export
-prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleandata"){
+type_data <- function(meta_and_records.l, table_name="cleandata"){
 
   # declaration of the function to convert sunrise and sunset columns to chron objects
   convertSun <- function(sunHour.chr){
@@ -166,20 +166,20 @@ prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleand
   sensors <- c("tsa", "tha", "hra", "tsf", "tss", "ens", "dvt", "vvt", "plu", "hct", "ts2", "th2", "hr2", "plu_sum")
 
   # Create the stations positions df
-  stations_meta.df <- meta_and_records.l[[1]]
+  stations_meta.df <- as.data.frame(meta_and_records.l[[1]])
 
   # Create the records df
-  records.df <- meta_and_records.l[[2]]
+  records.df <- as.data.frame(meta_and_records.l[[2]])
   if (table_name == "get_tmy") {
-    records.df <- records.df %>% dplyr::select(-metadata)
+    records.df <- as.data.frame(records.df %>% dplyr::select(-metadata))
   }
 
   # In stations_meta.df, tmy_period information are stored as df stored inside df. We need to extract these from this inner level and add as new columns
-  tmy_period.df <- stations_meta.df$metadata$tmy_period
+  tmy_period.df <- as.data.frame(stations_meta.df$metadata$tmy_period)
 
   if (table_name != "get_rawdata_dssf"){
     stations_meta.df <- stations_meta.df %>% dplyr::select(-metadata)
-    stations_meta.df <- dplyr::bind_cols(stations_meta.df, tmy_period.df)
+    stations_meta.df <- as.data.frame(dplyr::bind_cols(stations_meta.df, tmy_period.df))
     # Transform from & to column to posix format for easier time handling
     data.df <- stations_meta.df %>%
       dplyr::mutate_at("from", as.POSIXct, format = "%Y-%m-%dT%H:%M:%S", tz = "GMT-2") %>%
@@ -191,11 +191,11 @@ prepare_agromet_API_data.fun  <- function(meta_and_records.l, table_name="cleand
   if (!is.null(records.df)){
     # Join stations_meta and records by "id"
     if (!is.null(data.df)){
-      records.df <- dplyr::left_join(data.df, records.df, by=c("sid"))
+      records.df <- as.data.frame(dplyr::left_join(data.df, records.df, by=c("sid")))
     }
 
     # Transform sid and id columns from character to numeric
-    records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("sid", "id"))), dplyr::funs(as.numeric))
+    records.df <- as.data.frame(records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("sid", "id"))), dplyr::funs(as.numeric)))
 
     # Transform mtime column to posix format for easier time handling
     records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("mtime", "mhour"))), as.POSIXct, format = "%Y-%m-%dT%H:%M:%SZ")
