@@ -76,19 +76,19 @@ get_from_agromet_API <- function(
   if (api_table_req.resp$status_code!=200){
     stop(paste0("The API responded with an error ", api_table_req.resp$status_code, ". Function execution halted. \n Please check your token and the validity + order of the parameters you provided. API documentation available at https://app.pameseb.be/fr/pages/api_call_test/ " ))
   }
-  cat(paste0("The API responded with a status code ", api_table_req.resp$status_code, ". Your requested data has been downloaded \n"))
+  cat(paste0("The API responded with a status code ", api_table_req.resp$status_code, ". \n Your requested data has been downloaded \n"))
 
   # Getting the JSON data from the API response
-  api_results_json.chr <- httr::content(api_table_req.resp, as = "text")
+  api_results_json.chr <- httr::content(api_table_req.resp, as = "text", encoding = "UTF-8")
 
   # Transform the JSON response to R-friendly list format
   results.l <- jsonlite::fromJSON(api_results_json.chr)
 
   # Remove the terms of service and version info to only keep the data
-  if (table_name != "get_rawdata_dssf" ){
-    results.df <- results.l$results
+  if (table_name != "get_rawdata_dssf" ) {
+    results.df <- as.data.frame(results.l$results)
   }else{
-    results.df <- results.l$features
+    results.df <- as.data.frame(results.l$features)
 
     # make each feature properties a list element
     date_ens.l <- results.df$properties
@@ -100,12 +100,12 @@ get_from_agromet_API <- function(
 
     # join each feature coordinates + properties
     # https://stackoverflow.com/questions/44703738/merge-two-lists-of-dataframes
-    results.df <- purrr::map2_df(date_ens.l, coords.l, dplyr::left_join, by="sid")
+    results.df <- as.data.frame(purrr::map2_df(date_ens.l, coords.l, dplyr::left_join, by = "sid"))
     colnames(results.df) <- c("mhour", "ens", "sid", "lat", "lon")
   }
 
   # check if we do not have results for this query, stop the execution
-  if(class(results.df) != "data.frame"){
+  if (class(results.df) != "data.frame") {
     stop(paste0("There are no records for this query. Function execution halted. \n Please provide another date Range and/or parameters input" ))
   }
 
@@ -116,7 +116,7 @@ get_from_agromet_API <- function(
   stations_meta.df <- results.l$references$stations
 
   # The query with table = station does not provide records but only metadata stored in records.df
-  if(table_name == "station"){
+  if (table_name == "station") {
     stations_meta.df <- results.df
     results.df <- NULL
   }
@@ -125,8 +125,8 @@ get_from_agromet_API <- function(
   results_and_stations_meta.l <- list(stations_meta.df = stations_meta.df, records.df = results.df)
 
   # Present a quick overview of the results in the console
-  cat("Overview of the queried results : \n")
-  print.data.frame(head(results_and_stations_meta.l$records.df))
+  # cat("Overview of the queried results : \n")
+  # print.data.frame(head(results_and_stations_meta.l$records.df))
 
   # Return the results and the station_meta dataframes stored in as a list
   return(results_and_stations_meta.l)
