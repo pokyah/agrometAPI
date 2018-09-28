@@ -68,15 +68,15 @@ get_data <- function(
   if (table_name == "get_rawdata_dssf"){
     api_table_url.chr <- paste(baseURL.chr, api_v, table_name, dfrom, dto, "dailygeojson", sep="/")
   }
-  cat(paste("your API URL call is : ", api_table_url.chr, " \n "))
+  cat(paste("Your API URL call is : ", api_table_url.chr, " \n"))
 
   # Add your user token into the HTTP authentication header and call API (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
   api_table_req.resp <- httr::GET(api_table_url.chr, httr::add_headers("Authorization" = paste("Token", user_token, sep=" ")))
 
   if (api_table_req.resp$status_code!=200){
-    stop(paste0("The API responded with an error ", api_table_req.resp$status_code, ". Function execution halted. \n Please check your token and the validity + order of the parameters you provided. API documentation available at https://app.pameseb.be/fr/pages/api_call_test/ " ))
+    stop(paste0("The API responded with an error ", api_table_req.resp$status_code, ". Function execution halted. \n Please check your token and the validity + order of the parameters you provided. API documentation available at https://app.pameseb.be/fr/pages/api_call_test/" ))
   }
-  cat(paste0("The API responded with a status code ", api_table_req.resp$status_code, ". \n Your requested data has been downloaded \n"))
+  cat(paste0("The API responded with a status code ", api_table_req.resp$status_code, ". \n Data has been downloaded \n"))
 
   # Getting the JSON data from the API response
   api_results_json.chr <- httr::content(api_table_req.resp, as = "text", encoding = "UTF-8")
@@ -122,14 +122,17 @@ get_data <- function(
   }
 
   # Group in a list
-  results_and_stations_meta.l <- list(stations_meta.df = stations_meta.df, records.df = results.df)
+  results <- list(stations_meta.df = stations_meta.df, records.df = results.df)
 
   # Present a quick overview of the results in the console
   # cat("Overview of the queried results : \n")
   # print.data.frame(head(results_and_stations_meta.l$records.df))
 
   # Return the results and the station_meta dataframes stored in as a list
-  return(results_and_stations_meta.l)
+  cat(paste0(
+    "Data is stored in a list with 2 df elements. \n ",
+    "stations_meta.df contains the metadata and records.df contains the stations records."))
+  return(results)
 }
 
 
@@ -188,28 +191,36 @@ type_data <- function(meta_and_records.l, table_name="cleandata"){
     data.df <- NULL
   }
 
-  if (!is.null(records.df)){
+  if (!is.null(records.df)) {
     # Join stations_meta and records by "id"
-    if (!is.null(data.df)){
-      records.df <- as.data.frame(dplyr::left_join(data.df, records.df, by=c("sid")))
+    if (!is.null(data.df)) {
+      records.df <- as.data.frame(dplyr::left_join(data.df, records.df, by = c("sid")))
     }
 
     # Transform sid and id columns from character to numeric
-    records.df <- as.data.frame(records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("sid", "id"))), dplyr::funs(as.numeric)))
+    records.df <- suppressWarnings(records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("sid", "id"))), dplyr::funs(as.numeric)))
+
+    # records.df <- records.df %>%
+    #   dplyr::mutate_at(
+    #     if (c('sid', 'id') %in% names(.)) c('sid', 'id') else integer(0), dplyr::funs(as.numeric)
+    #     )
 
     # Transform mtime column to posix format for easier time handling
-    records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("mtime", "mhour"))), as.POSIXct, format = "%Y-%m-%dT%H:%M:%SZ")
+    records.df <- suppressWarnings(records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("mtime", "mhour"))), as.POSIXct, format = "%Y-%m-%dT%H:%M:%SZ"))
+
 
     # Transform meta altitude, longitude, latitude columns from character to numeric
-    records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("altitude", "longitude", "latitude", "lon", "lat"))), dplyr::funs(as.numeric))
+    records.df <- suppressWarnings(records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(c("altitude", "longitude", "latitude", "lon", "lat"))), dplyr::funs(as.numeric)))
 
-    if(table_name != "get_rawdata_dssf"){
+
+    if (table_name != "get_rawdata_dssf") {
       # Transform sensors columns from character to numeric values
-      records.df <- records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(sensors)), dplyr::funs(as.numeric))
+      records.df <- suppressWarnings(records.df %>% dplyr::mutate_at(dplyr::vars(dplyr::one_of(sensors)), dplyr::funs(as.numeric)))
+
 
       # Transform sunrise/sunset columns to times format for easier time handling
-      if(!is.null(records.df$sunrise)){
-        records.df <- records.df %>% dplyr::mutate_at(c("sunrise","sunset"), convertSun)
+      if (!is.null(records.df$sunrise)) {
+        records.df <- suppressWarnings(records.df %>% dplyr::mutate_at(c("sunrise","sunset"), convertSun))
       }
     }
   }
